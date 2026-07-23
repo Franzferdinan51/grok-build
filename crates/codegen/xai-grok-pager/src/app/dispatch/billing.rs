@@ -67,19 +67,23 @@ pub(super) fn credit_limit_upsell_mode(
 
 /// Whether an API / retry error is a credit-limit / spend-block denial.
 ///
-/// - **402** Payment Required — always credit/spend block on this surface
-///   (Build pool and IC spend blocks); no message filter.
-/// - **403** — only when the body contains "run out of credits" (legacy IC
-///   spend wording); other 403s (content-safety, ZDR, …) are excluded.
+/// This classifier is intentionally provider-aware by message content. A
+/// custom model endpoint must not open a Grok billing modal merely because it
+/// returned HTTP 402; only explicit Grok billing language is treated as a
+/// Grok credit-limit event.
 pub(crate) fn is_credit_limit_error(http_status: Option<u16>, message: &str) -> bool {
     let m = message.to_ascii_lowercase();
+    let grok_billing = m.contains("grok build")
+        || m.contains("usage balance")
+        || m.contains("run out of credits")
+        || m.contains("spending cap")
+        || m.contains("payment required");
     let legacy = m.contains("run out of credits");
     match http_status {
-        Some(402) => true,
+        Some(402) => grok_billing,
         Some(403) if legacy => true,
-        // Retry notifications embed "status 402" / "status 403" in the body
-        // without a separate status field.
-        None | Some(_) => m.contains("status 402") || (m.contains("status 403") && legacy),
+        None | Some(_) => grok_billing
+            && (m.contains("status 402") || (m.contains("status 403") && legacy)),
     }
 }
 

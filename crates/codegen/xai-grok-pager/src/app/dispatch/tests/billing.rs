@@ -314,10 +314,10 @@ fn is_credit_limit_error_matches_legacy_403_and_pool_402() {
         Some(403),
         "status 403: run out of credits"
     ));
-    // 402 Payment Required is always credit/spend on this surface.
-    assert!(is_credit_limit_error(Some(402), "anything"));
+    // A custom endpoint's generic 402 must not trigger the Grok billing UI.
+    assert!(!is_credit_limit_error(Some(402), "anything"));
     assert!(is_credit_limit_error(
-        None,
+        Some(402),
         "API error (status 402 Payment Required): Grok Build usage balance exhausted"
     ));
     assert!(is_credit_limit_error(

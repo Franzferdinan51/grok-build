@@ -7,14 +7,14 @@
     <img alt="SpaceXAI logo" src="https://media.x.ai/v1/website/spacexai-symbol-black-transparent-6435cf42.png" width="96">
   </picture>
   <br>
-  Grok Build (<code>grok</code>)
+  DuckBuild (<code>duckbuild</code>)
 </h1>
 
-**Grok Build** is SpaceXAI's terminal-based AI coding agent. It runs as a
-full-screen TUI that understands your codebase, edits files, executes shell
-commands, searches the web, and manages long-running tasks — interactively,
-headlessly for scripting/CI, or embedded in editors via the Agent Client
-Protocol (ACP).
+**DuckBuild** is a provider-flexible terminal-based AI coding agent derived
+from Grok Build. It keeps the upstream agent runtime, TUI, ACP, tools, and
+workspace features while treating Grok as one optional provider among many.
+Custom endpoints and local models can continue operating when Grok usage is
+exhausted.
 
 [Installing the released binary](#installing-the-released-binary) ·
 [Building from source](#building-from-source) ·
@@ -73,8 +73,8 @@ Requirements:
   and not currently tested from this tree.
 
 ```sh
-cargo run -p xai-grok-pager-bin              # build + launch the TUI
-cargo build -p xai-grok-pager-bin --release  # release binary: target/release/xai-grok-pager
+cargo run -p xai-grok-pager-bin              # build + launch DuckBuild
+cargo build -p xai-grok-pager-bin --release  # release binary: target/release/duckbuild
 cargo check -p xai-grok-pager-bin            # fast validation
 ```
 
