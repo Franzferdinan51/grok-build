@@ -1874,7 +1874,7 @@ mod tests {
             vec![
                 "Grok Build TUI",
                 "",
-                "Usage: grok [OPTIONS] [PROMPT] [COMMAND]",
+                "Usage: duckbuild [OPTIONS] [PROMPT] [COMMAND]",
                 "",
                 "Arguments:",
             ]
