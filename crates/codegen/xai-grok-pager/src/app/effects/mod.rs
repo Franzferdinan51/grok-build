@@ -132,10 +132,20 @@ pub(crate) fn execute(
         } => {
             let tx = acp_tx.clone();
             let compat = xai_grok_tools::types::compat::CompatConfig::default();
-            let mcp_servers = xai_grok_shell::util::config::load_mcp_servers(
-                &session_cwd,
-                &compat,
-            );
+            let mcp_servers = if std::env::var("DUCKBUILD_MCP_ON_STARTUP")
+                .ok()
+                .is_some_and(|value| value == "1" || value.eq_ignore_ascii_case("true"))
+            {
+                xai_grok_shell::util::config::load_mcp_servers(
+                    &session_cwd,
+                    &compat,
+                )
+            } else {
+                // Keep standalone session creation independent of optional MCP
+                // servers. A hung MCP process must not prevent the model
+                // session itself from being created.
+                Vec::new()
+            };
             let mcp_count = mcp_servers.len();
             #[allow(unused_mut)]
             let mut meta = session_flags.to_meta();
