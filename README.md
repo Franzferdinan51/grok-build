@@ -119,7 +119,27 @@ cargo clippy -p <crate>       # lint config: clippy.toml at the repo root
 cargo fmt --all               # rustfmt.toml at the repo root
 ```
 
-## Contributing
+## Standalone provider configuration
+
+DuckBuild keeps the upstream model registry and adds provider-independent
+routing. Configure additional OpenAI-compatible providers and models in
+`~/.grok/config.toml` under `[model.<name>]`. Each model may define its own
+`model`, `base_url`, and `api_key`/environment-key settings. Native Grok
+subscription and usage gates apply only to selected `grok`/`xai` models;
+local, MiniMax, Codex, NVIDIA, and other custom endpoints are not blocked by
+Grok usage exhaustion. Keep `upstream` configured as the upstream Git remote
+so provider and runtime updates can be merged without replacing local
+settings.
+
+Example shape (use your own endpoint and secret reference):
+
+```toml
+[model.my-local-model]
+model = "my-local-model"
+base_url = "http://127.0.0.1:1234/v1"
+api_key = "${MY_LOCAL_API_KEY}"
+```
+
 
 > [!NOTE]
 > External contributions are not accepted. See [`CONTRIBUTING.md`](CONTRIBUTING.md).

@@ -43,12 +43,24 @@ pub(crate) const SUBSCRIPTION_CHECK_DEBOUNCE: std::time::Duration =
 pub(crate) const GATE_VERIFY_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
 
 impl AppView {
-    /// Consumer xAI session auth: not an API key, not an enterprise team.
-    /// Subscription gates and the watch only apply to these sessions.
+    /// Subscription gates belong only to native Grok/xAI model sessions.
+    /// Provider-backed custom models must remain usable when the Grok account
+    /// has exhausted its separate usage pool.
+    fn is_grok_model_selected(&self) -> bool {
+        self.models
+            .current_model_name()
+            .map(|name| {
+                let name = name.to_ascii_lowercase();
+                name.contains("grok") || name.contains("xai")
+            })
+            .unwrap_or(true)
+    }
+
     fn is_consumer_session(&self) -> bool {
         matches!(self.auth_state, AuthState::Done)
             && !self.is_api_key_auth
             && self.team_name.is_none()
+            && self.is_grok_model_selected()
     }
 
     /// `None` tier counts as potentially-free so detection works before the
